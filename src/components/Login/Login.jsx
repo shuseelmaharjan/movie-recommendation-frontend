@@ -27,6 +27,9 @@ const Login = () => {
         localStorage.setItem('refresh_token', response.data.refresh_token);
 
         navigate('/');
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
       } else {
         setError('Invalid login credentials.');
       }
@@ -40,7 +43,7 @@ const Login = () => {
     <div
       className="d-flex align-items-center justify-content-center"
       style={{
-        height: "calc(100vh - 70px)",
+        height: "calc(100vh - 7vh)",
         backgroundImage: `url(${bg})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
