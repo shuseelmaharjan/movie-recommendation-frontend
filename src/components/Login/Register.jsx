@@ -54,7 +54,6 @@ const Register = () => {
       position: "relative",
     }}
   >
-    {/* Black overlay */}
     <div
       style={{
         position: "absolute",
@@ -67,12 +66,10 @@ const Register = () => {
       }}
     ></div>
   
-    {/* Form Content */}
     <div className="container position-relative text-white" style={{ zIndex: 2 }}>
       <div className="row justify-content-center">
         <div className="col-md-6">
-          <div
-            className="card shadow-lg border-10"
+          <div className="card shadow-lg border-10"
             style={{
               backgroundColor: "rgba(255, 255, 255, 0.1)", 
               backdropFilter: "blur(10px)", 
@@ -169,7 +166,7 @@ const Register = () => {
                 <div className="text-center mt-3">
                   <p className="mb-0">
                     Already a User?{" "}
-                    <Link to="/login" className="text-primary">
+                    <Link to="/login" className="text-white">
                       Login
                     </Link>
                   </p>

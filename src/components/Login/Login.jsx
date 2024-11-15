@@ -2,34 +2,30 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import bg from './../../assets/bg1.jpg';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');  // For error handling
-  const navigate = useNavigate();  // For navigation
+  const [error, setError] = useState('');  
+  const navigate = useNavigate(); 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validation checks for email and password
     if (!email || !password) {
       setError('Please enter both email and password.');
       return;
     }
 
     try {
-      // Sending login request to the API
       const response = await axios.post('http://localhost:8000/api/login', { email, password });
 
-      // Check if login is successful
       if (response.data.userId && response.data.access_token && response.data.refresh_token) {
-        // Store tokens and userId in localStorage
         localStorage.setItem('userId', response.data.userId);
         localStorage.setItem('access_token', response.data.access_token);
         localStorage.setItem('refresh_token', response.data.refresh_token);
 
-        // Navigate to home page
         navigate('/');
       } else {
         setError('Invalid login credentials.');
@@ -41,33 +37,48 @@ const Login = () => {
   };
 
   return (
-    <div className="container mt-5 position-relative" style={{
-        minHeight: '100vh',
-      }}>
-        {/* Background Image Overlay */}
-        <div 
-          className="position-absolute top-0 start-0 w-100 h-100"
-          style={{
-            backgroundImage: 'url("https://www.reddit.com/media?url=https%3A%2F%2Fpreview.redd.it%2F2jhtmqhg4mo81.png%3Fwidth%3D1920%26format%3Dpng%26auto%3Dwebp%26s%3D0d41709c3c478d2bcadfd8f2450271f175c0676f&rdt=61125")',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            opacity: 0.5,
-          }}
-        ></div>
-      
-        <div className="row justify-content-center position-relative">
-          <div className="col-md-4">
-            <div className="card shadow-lg border-0">
-              <div className="card-body">
-                <h3 className='text-center'>Login</h3>
-      
+    <div
+      className="d-flex align-items-center justify-content-center"
+      style={{
+        height: "calc(100vh - 70px)",
+        backgroundImage: `url(${bg})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        position: "relative",
+      }}
+    >
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          backgroundColor: "rgba(0, 0, 0, 0.8)",
+          zIndex: 1,
+        }}
+      ></div>
+
+      <div className="container position-relative text-white" style={{ zIndex: 2 }}>
+        <div className="row justify-content-center">
+          <div className="col-md-6">
+            <div
+              className="card shadow-lg border-10"
+              style={{
+                backgroundColor: "rgba(255, 255, 255, 0.1)",
+                backdropFilter: "blur(10px)",
+              }}
+            >
+              <div className="card-body px-4 py-5 text-white">
+                <h3 className="text-center mb-4">Login</h3>
                 <form onSubmit={handleSubmit}>
-                  {/* Email field */}
                   <div className="mb-3">
-                    <label htmlFor="email" className="form-label">Email address</label>
+                    <label htmlFor="email" className="form-label">
+                      Email Address
+                    </label>
                     <input
                       type="email"
-                      className="form-control"
+                      className="form-control bg-transparent text-white border border-gray-500 focus:border-white focus:ring-0 placeholder-gray-400"
                       id="email"
                       placeholder="Enter your email"
                       value={email}
@@ -75,13 +86,13 @@ const Login = () => {
                       required
                     />
                   </div>
-      
-                  {/* Password field */}
                   <div className="mb-3">
-                    <label htmlFor="password" className="form-label">Password</label>
+                    <label htmlFor="password" className="form-label">
+                      Password
+                    </label>
                     <input
                       type="password"
-                      className="form-control"
+                      className="form-control bg-transparent text-white border border-gray-500 focus:border-white focus:ring-0 placeholder-gray-400"
                       id="password"
                       placeholder="Enter your password"
                       value={password}
@@ -89,30 +100,39 @@ const Login = () => {
                       required
                     />
                   </div>
-      
-                  {/* Submit Button */}
-                  <div className="mb-3 text-center">
-                    <button type="submit" className="btn btn-primary w-100">Login</button>
+                  <div className="d-grid mt-4">
+                    <button
+                      type="submit"
+                      className="btn"
+                      style={{ background: "orange" }}
+                    >
+                      <strong>Login</strong>
+                    </button>
                   </div>
-      
-                  {/* Link to Register */}
-                  <div className="mb-3 text-center">
-                    <p>Don't have an account? <Link to='/register'>Register</Link></p>
+                  <div className="text-center mt-3">
+                    <p className="mb-0">
+                      Don’t have an account?{" "}
+                      <Link to="/register" className="text-white">
+                        Register
+                      </Link>
+                    </p>
                   </div>
-      
-                  {error && (
-                    <div className="alert alert-danger" role="alert">
-                      {error}
-                    </div>
-                  )}
                 </form>
+                {error && (
+                  <div
+                    className="alert alert-danger mt-3"
+                    role="alert"
+                  >
+                    {error}
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </div>
       </div>
-      
-    
+    </div>
+
   );
 };
 

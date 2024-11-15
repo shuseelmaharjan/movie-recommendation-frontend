@@ -4,27 +4,25 @@ import axios from 'axios';
 import logo from './../../assets/logo.png';
 
 const Navbar = () => {
-  const [userId, setUserId] = useState(null);  // Store userId
-  const [role, setRole] = useState('');  // Store user role
-  const [showModal, setShowModal] = useState(false);  // State to control modal visibility
-  const navigate = useNavigate();  // For navigation
+  const [userId, setUserId] = useState(null);  
+  const [role, setRole] = useState('');  
+  const [showModal, setShowModal] = useState(false);  
+  const navigate = useNavigate();  
 
-  // Check for tokens and userId on initial load and when the localStorage is updated
   useEffect(() => {
     const storedUserId = localStorage.getItem('userId');
     const storedAccessToken = localStorage.getItem('access_token');
     const storedRefreshToken = localStorage.getItem('refresh_token');
 
     if (storedUserId && storedAccessToken && storedRefreshToken) {
-      setUserId(storedUserId);  // Set userId when logged in
-      fetchUserRole(storedUserId);  // Fetch role if user is logged in
+      setUserId(storedUserId);  
+      fetchUserRole(storedUserId);  
     } else {
-      setUserId(null);  // Clear userId if tokens are not found
-      setRole('');  // Reset role
+      setUserId(null);  
+      setRole(''); 
     }
-  }, []);  // This effect runs only once when the component mounts
+  }, []); 
 
-  // Fetch user role from the backend
   const fetchUserRole = async (userId) => {
     try {
       const response = await axios.get(`http://localhost:8000/api/role/${userId}`, {
@@ -34,24 +32,22 @@ const Navbar = () => {
       });
 
       if (response.status === 200) {
-        setRole(response.data.role);  // Set role based on response
+        setRole(response.data.role); 
       }
     } catch (error) {
       console.error('Failed to fetch user role:', error);
     }
   };
 
-  // Logout function (will trigger modal)
   const handleLogout = () => {
-    setShowModal(true);  // Show the confirmation modal
+    setShowModal(true); 
   };
 
-  // Confirm logout
   const confirmLogout = async () => {
     try {
       const refreshToken = localStorage.getItem('refresh_token');
       if (!refreshToken) {
-        // No refresh token, log out locally
+        
         clearUserSession();
         navigate('/login');
         return;
@@ -79,18 +75,16 @@ const Navbar = () => {
     }
   };
 
-  // Cancel logout (hide modal)
   const cancelLogout = () => {
-    setShowModal(false);  // Hide the modal
+    setShowModal(false); 
   };
 
-  // Clear user session (remove tokens and userId from localStorage)
   const clearUserSession = () => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     localStorage.removeItem('userId');
-    setUserId(null);  // Update state
-    setRole('');  // Clear role
+    setUserId(null);  
+    setRole('');  
   };
 
   return (
@@ -114,7 +108,6 @@ const Navbar = () => {
               <Link className="nav-link text-white" to="/about">About</Link>
             </li>
             
-            {/* Conditionally render navigation based on role */}
             {role === 'user' && (
               <li className="nav-item">
                 <Link className="nav-link text-white" to="/movies">Movies</Link>
@@ -141,7 +134,6 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Bootstrap Modal for Logout Confirmation */}
       {showModal && (
         <div className="modal show" tabIndex="-1" style={{ display: 'block' }} aria-labelledby="logoutModal" aria-hidden="true">
           <div className="modal-dialog">
