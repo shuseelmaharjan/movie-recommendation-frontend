@@ -4,10 +4,10 @@ import axios from 'axios';
 import logo from './../../assets/logo.png';
 
 const Navbar = () => {
-  const [userId, setUserId] = useState(null);  
-  const [role, setRole] = useState('');  
-  const [showModal, setShowModal] = useState(false);  
-  const navigate = useNavigate();  
+  const [userId, setUserId] = useState(null);
+  const [role, setRole] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const storedUserId = localStorage.getItem('userId');
@@ -15,13 +15,13 @@ const Navbar = () => {
     const storedRefreshToken = localStorage.getItem('refresh_token');
 
     if (storedUserId && storedAccessToken && storedRefreshToken) {
-      setUserId(storedUserId);  
-      fetchUserRole(storedUserId);  
+      setUserId(storedUserId);
+      fetchUserRole(storedUserId);
     } else {
-      setUserId(null);  
-      setRole(''); 
+      setUserId(null);
+      setRole('');
     }
-  }, []); 
+  }, []);
 
   const fetchUserRole = async (userId) => {
     try {
@@ -32,7 +32,7 @@ const Navbar = () => {
       });
 
       if (response.status === 200) {
-        setRole(response.data.role); 
+        setRole(response.data.role);
       }
     } catch (error) {
       console.error('Failed to fetch user role:', error);
@@ -47,7 +47,6 @@ const Navbar = () => {
     try {
       const refreshToken = localStorage.getItem('refresh_token');
       if (!refreshToken) {
-        
         clearUserSession();
         navigate('/login');
         return;
@@ -76,58 +75,79 @@ const Navbar = () => {
   };
 
   const cancelLogout = () => {
-    setShowModal(false); 
+    setShowModal(false);
   };
 
   const clearUserSession = () => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     localStorage.removeItem('userId');
-    setUserId(null);  
-    setRole('');  
+    setUserId(null);
+    setRole('');
   };
 
   return (
-    <nav className="navbar navbar-expand-lg" style={{backgroundColor:'#320221', height:'7vh'}} >
+    <nav className="navbar navbar-expand-lg" style={{ backgroundColor: '#320221', height: '7vh' }}>
       <div className="container">
         <Link className="navbar-brand" to="/">
-            <img src={logo} alt="Logo" className="d-inline-block align-top" width="40" />
+          <img src={logo} alt="Logo" className="d-inline-block align-top" width="40" />
         </Link>
 
-
-        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
           <span className="navbar-toggler-icon"></span>
         </button>
 
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav ms-auto">
             <li className="nav-item">
-              <Link className="nav-link text-white" to="/home">Home</Link>
+              <Link className="nav-link text-white" to="/">
+                Home
+              </Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link text-white" to="/about">About</Link>
+              <Link className="nav-link text-white" to="/about">
+                About
+              </Link>
             </li>
-            
+
             {role === 'user' && (
               <li className="nav-item">
-                <Link className="nav-link text-white" to="/movies">Movies</Link>
+                <Link className="nav-link text-white" to="/movies">
+                  Movies
+                </Link>
               </li>
             )}
             {role === 'admin' && (
               <li className="nav-item">
-                <Link className="nav-link text-white" to="/dashboard">Dashboard</Link>
+                <Link className="nav-link text-white" to="/dashboard">
+                  Dashboard
+                </Link>
               </li>
             )}
 
             {userId ? (
               <li className="nav-item">
-                <span className="nav-link text-white" style={{ cursor: 'pointer' }} onClick={handleLogout}>
+                <span
+                  className="nav-link text-white"
+                  style={{ cursor: 'pointer' }}
+                  onClick={handleLogout}
+                >
                   Logout ({userId})
                 </span>
               </li>
             ) : (
               <li className="nav-item">
-                <Link className="nav-link text-white" to="/login">Login</Link>
+                <Link className="nav-link text-white" to="/login">
+                  Login
+                </Link>
               </li>
             )}
           </ul>
@@ -135,23 +155,36 @@ const Navbar = () => {
       </div>
 
       {showModal && (
-        <div className="modal show" tabIndex="-1" style={{ display: 'block' }} aria-labelledby="logoutModal" aria-hidden="true">
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title" id="logoutModal">Confirm Logout</h5>
-                <button type="button" className="btn-close" onClick={cancelLogout} aria-label="Close"></button>
-              </div>
-              <div className="modal-body">
-                Are you sure you want to logout?
-              </div>
-              <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" onClick={cancelLogout}>Cancel</button>
-                <button type="button" className="btn btn-danger" onClick={confirmLogout}>Confirm Logout</button>
+        <>
+          <div
+            className="modal-backdrop fade show"
+            style={{
+              zIndex: 1050, 
+            }}
+          ></div>
+
+          <div className="modal show" tabIndex="-1" style={{ display: 'block', zIndex: 1060 }} aria-labelledby="logoutModal" aria-hidden="true">
+            <div className="modal-dialog">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title" id="logoutModal">Confirm Logout</h5>
+                  <button type="button" className="btn-close" onClick={cancelLogout} aria-label="Close"></button>
+                </div>
+                <div className="modal-body">
+                  Are you sure you want to logout?
+                </div>
+                <div className="modal-footer">
+                  <button type="button" className="btn btn-secondary" onClick={cancelLogout}>
+                    Cancel
+                  </button>
+                  <button type="button" className="btn btn-danger" onClick={confirmLogout}>
+                    Confirm Logout
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </>
       )}
     </nav>
   );
