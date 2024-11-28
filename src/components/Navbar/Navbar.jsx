@@ -8,14 +8,14 @@ const Navbar = () => {
   const [role, setRole] = useState('');
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
+  const email = localStorage.getItem('email');
 
   useEffect(() => {
-    const storedUserId = localStorage.getItem('userId');
     const storedAccessToken = localStorage.getItem('access_token');
     const storedRefreshToken = localStorage.getItem('refresh_token');
+    const userId = localStorage.getItem('userId');
 
-    if (storedUserId && storedAccessToken && storedRefreshToken) {
-      setUserId(storedUserId);
+    if (storedAccessToken && storedRefreshToken) {
       fetchUserRole(storedUserId);
     } else {
       setUserId(null);
@@ -133,14 +133,14 @@ const Navbar = () => {
               </li>
             )}
 
-            {userId ? (
+            {email ? (
               <li className="nav-item">
                 <span
                   className="nav-link text-white"
                   style={{ cursor: 'pointer' }}
                   onClick={handleLogout}
                 >
-                  Logout ({userId})
+                  Logout ({email})
                 </span>
               </li>
             ) : (

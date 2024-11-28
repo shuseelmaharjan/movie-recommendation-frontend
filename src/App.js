@@ -7,6 +7,7 @@ import Login from './components/Login/Login';
 import Register from './components/Login/Register';
 import Navbar from './components/Navbar/Navbar';
 import Movies from './components/Movies/Movies';
+import Dashboard from './components/Dashboard/Dashboard';
 function App() {
   return (
     <>
@@ -18,6 +19,7 @@ function App() {
         <Route path='/login' element={<Login/>}/>
         <Route path='/register' element={<Register/>}/>
         <Route path='/movies' element={<Movies/>}/>
+        <Route path='/dashboard' element={<Dashboard/>}/>
       </Routes>
     </Router>
     </>
