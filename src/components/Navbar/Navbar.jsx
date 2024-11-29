@@ -4,23 +4,16 @@ import axios from 'axios';
 import logo from './../../assets/logo.png';
 
 const Navbar = () => {
-  const [userId, setUserId] = useState(null);
   const [role, setRole] = useState('');
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
   const email = localStorage.getItem('email');
 
-  useEffect(() => {
-    const storedAccessToken = localStorage.getItem('access_token');
-    const storedRefreshToken = localStorage.getItem('refresh_token');
-    const userId = localStorage.getItem('userId');
+  
 
-    if (storedAccessToken && storedRefreshToken) {
-      fetchUserRole(storedUserId);
-    } else {
-      setUserId(null);
-      setRole('');
-    }
+  useEffect(() => {
+    const userId = localStorage.getItem('userId');
+    fetchUserRole(userId);  
   }, []);
 
   const fetchUserRole = async (userId) => {
@@ -82,7 +75,6 @@ const Navbar = () => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     localStorage.removeItem('userId');
-    setUserId(null);
     setRole('');
   };
 
