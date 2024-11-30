@@ -1,11 +1,51 @@
-import React from 'react'
+import React, { useState } from 'react';
 import bg2 from './../../assets/bg2.jpg';
 import { Footer } from '../Footer/Footer';
-import movie1 from './../../assets/movie1.jpg';
-import movie2 from './../../assets/movie2.jpg';
-import movie3 from './../../assets/movie3.jpg';
+import moviePlaceholder from './../../assets/movie1.jpg';
+import axios from 'axios';
 
 const Home = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
+  const [recommendedMovies, setRecommendedMovies] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) {
+      setError('Please enter a movie title to search.');
+      return;
+    }
+  
+    setError('');
+    setLoading(true);
+  
+    try {
+      const response = await axios.get(
+        `http://localhost:8000/api/recommend/?title=${encodeURIComponent(searchQuery)}`
+      );
+      setRecommendedMovies(response.data); // No need for `response.json()` with Axios
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to fetch recommendations.');
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+
+  const fetchSuggestions = async (query) => {
+    if (!query.trim()) return;
+
+    try {
+      const response = await axios.get(
+        `http://localhost:8000/api/suggest/?query=${encodeURIComponent(query)}`
+      );
+      setSuggestions(response.data); // Directly use response data
+    } catch (err) {
+      console.error('Failed to fetch suggestions:', err);
+    }
+  };
+
   return (
     <>
       {/* Hero Section */}
@@ -36,38 +76,79 @@ const Home = () => {
           <h1 className="display-4">Discover Your Next Favorite Movie</h1>
           <p className="lead mb-4">Get personalized movie recommendations based on your tastes</p>
           <div className="d-flex justify-content-center">
-            <input 
-              type="text" 
-              className="form-control w-50" 
-              placeholder="Search for movies, actors, genres..." 
-            />
-            <button className="btn ms-2" style={{ background: 'orange' }}>Search</button>
+            <div className="position-relative">
+              <input 
+                type="text" 
+                className="form-control w-100" 
+                placeholder="Search for movies, actors, genres..." 
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  fetchSuggestions(e.target.value);
+                }}
+              />
+              {suggestions.length > 0 && (
+                <ul className="list-group position-absolute w-100" style={{ top: '100%', zIndex: 3 }}>
+                  {suggestions.map((suggestion, index) => (
+                    <li 
+                      key={index} 
+                      className="list-group-item"
+                      onClick={() => {
+                        setSearchQuery(suggestion);
+                        setSuggestions([]);
+                      }}
+                    >
+                      {suggestion}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+            <button 
+              className="btn ms-2" 
+              style={{ background: 'orange' }}
+              onClick={handleSearch}
+            >
+              Search
+            </button>
           </div>
+          {error && <p className="text-danger mt-3">{error}</p>}
         </div>
       </div>
 
-      {/* Featured Categories Section */}
-      <div className="container py-5">
-        <h2 className="text-center mb-4">Featured Movie Categories</h2>
-        <div className="row">
-          <div className="col-md-4">
-            <div className="card">
-              <img src={movie1} className="card-img-top" alt="Action Movies" style={{ height: '500px', objectFit: 'cover' }}/>
-            </div>
-          </div>
-          <div className="col-md-4">
-            <div className="card">
-              <img src={movie2} className="card-img-top" alt="Drama Movies" style={{ height: '500px', objectFit: 'cover' }}/>
-            </div>
-          </div>
-          <div className="col-md-4">
-            <div className="card">
-              <img src={movie3} className="card-img-top" alt="Comedy Movies" style={{ height: '500px', objectFit: 'cover' }}/>
-            </div>
+      {/* Recommendations Section */}
+      {loading ? (
+        <div className="text-center my-5">
+          <p>Loading recommendations...</p>
+        </div>
+      ) : recommendedMovies.length > 0 ? (
+        <div className="container py-5">
+          <h2 className="text-center mb-4">Recommended Movies</h2>
+          <div className="row">
+            {recommendedMovies.map((movie, index) => (
+              <div className="col-md-4 mb-4" key={index}>
+                <div className="card">
+                  <img 
+                    src={movie.image || moviePlaceholder} 
+                    className="card-img-top" 
+                    alt={movie.title} 
+                    style={{ height: '400px', objectFit: 'cover' }} 
+                  />
+                  <div className="card-body">
+                    <h5 className="card-title">{movie.title}</h5>
+                    <p className="card-text">{movie.description || 'No description available.'}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
-      </div>
-      
+      ) : (
+        <div className="text-center my-5">
+          <p>No recommendations found. Try searching for another movie.</p>
+        </div>
+      )}
+
       <Footer />
     </>
   );
